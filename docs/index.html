@@ -65,6 +65,7 @@ $ test_version();
 $ function test_parse() {
 >   var OK = false;
 >   rpc('testA', {}, function (data) {
+>     writeln(data.result);
 >     var result = otr_message.parse(data.result);
 >     console.info(result)
 >     writeln(result);
