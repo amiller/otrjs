@@ -1,0 +1,6 @@
+Andrew Miller <amiller@dappervision.com>
+
+This is a javascript implementation of OTR, for the purpose of secure browser-to-browser chat
+
+It's entirely incomplete, the only concrete goal for now is to provide a test suite for otr-message using doctest.js and a python/libotr debug server.
+

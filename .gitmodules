@@ -1,0 +1,3 @@
+[submodule "otr-message"]
+	path = otr-message
+	url = git@github.com:amiller/otr-message.git

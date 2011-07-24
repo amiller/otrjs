@@ -1,0 +1,8 @@
+Andrew Miller <amiller@dappervision.com>
+
+Python test-server for otrjs and otr-message
+
+Usage:
+  python test_server 8090
+
+  [Then open browser to localhost:8090]
