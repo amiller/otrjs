@@ -2,7 +2,11 @@ Andrew Miller <amiller@dappervision.com>
 
 Python test-server for otrjs and otr-message
 
+Requirements:
+   pycrypto
+   python-otr (version i1.0.0beta1 (2011-06-10))
+   flask
+
 Usage:
   $ python test_server [--port 8090]
-
-  Then open browser to localhost:8090
+  Then open a browser to localhost:8090
