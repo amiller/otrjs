@@ -1,3 +1,6 @@
 [submodule "otr-message"]
 	path = otr-message
 	url = git@github.com:amiller/otr-message.git
+[submodule "doctestjs"]
+	path = "docs/doctestjs"
+	url = http://github.com/ianb/doctestjs/

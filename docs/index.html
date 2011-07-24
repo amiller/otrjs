@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>OTRjs test suite</title>
+  <script type="text/javascript" src="doctestjs/doctest.js"></script>
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script data-main="main" src="require.js"></script>
+  <link rel="stylesheet" type="text/css" href="doctestjs/doctest.css" />
+</head>
+<body class="autodoctest">
+  <h3>OTRjs test suite</h3>
+  <p>Test suite for the <a href="github.com/amiller/otrjs">otrjs</a> javascript implementation of the OTR messaging protocol. The idea is to run a <a href="https://github.com/amiller/otrjs/blob/master/test/README">python server</a> that wraps libotr and have the javascript test suite speak to the server in OTR messages.
+
+<p>Important components:
+<ul>
+<li><a href="https://github.com/ianb/doctestjs">doctest.js</a>
+<li><a href="http://github.com/amiller/otrjs">otrjs</a>
+<li><a href="http://github.com/abiggerhammer/otr-message">otr-message</a>
+<li><a href="http://python-otr.pentabarf.de/">python-otr</a>
+</ul>
+
+<h3>Doctest output</h3>
+  <div id="doctestOutput"></div>
+  <script type="text/javascript">
+    var otr_message;
+    var ReParse;
+    require(['require', 'reparse', 'otr_message'], function (require) {
+	ReParse = require("reparse");
+	otr_message = require("otr_message");
+    });
+
+    function rpc(method, params, success) {
+	$.ajax({
+	    url:'/rpc',
+	    type:'post',
+	    data: {'method': method, 'params': params},
+	    dataType:'json',
+	    success: success
+	})
+    }
+  </script>
+  <h3>Check python-otr version</h3>
+  <pre class="doctest">
+$ function test_version() {
+>   var OK = false;
+>   $.ajax({
+>     method: 'post',
+>     url: '/info',
+>     dataType: 'json',
+>     success: function (data) {
+>       OK = true;
+>       writeln(repr(data));
+>     },
+>     error: function (err) {
+>       writeln(repor(err));
+>     }
+>   })
+>   wait(function () { return OK });
+> }
+$ test_version();
+{potr-version: [1, 0, 0, "beta1"]}
+   </pre>
+
+  <h3>Try to parse an OTR authStartV2 message</h3>
+  <pre class="doctest">
+$ function test_parse() {
+>   var OK = false;
+>   rpc('testA', {}, function (data) {
+>     var result = otr_message.parse(data.result);
+>     console.info(result)
+>     writeln(result);
+>     OK = true;
+>   })
+>   wait(function() { return OK });
+> }
+$ test_parse()
+  </pre>
+</body>
+</html>
