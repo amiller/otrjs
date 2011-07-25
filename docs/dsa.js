@@ -1,4 +1,12 @@
-// "empty" RSA key constructor
+// DSA Signatures in javascript
+// Andrew Miller <amiller@dappervision.com>
+
+// This uses the JSBN (Javascript BigNumber) library by Tom Wu.
+// JSBN only comes with implementations of RSA and ECC, so I am
+// adding DSA.  
+// https://github.com/jasondavies/jsbn
+
+// "empty" DSA key constructor
 function DSAKey() {
   this.y = null;
   this.g = null;
