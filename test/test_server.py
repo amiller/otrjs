@@ -30,7 +30,7 @@ ctx = Context(alice, 'bob')
 ctx.authStartV2()
 
 
-def testA():
+def get_dsa():
     # FIXME What is supposed to be passed to POTR?
     return str(ctx.out[0])
 

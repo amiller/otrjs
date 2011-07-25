@@ -8,14 +8,20 @@
 </head>
 <body class="autodoctest">
   <h3>OTRjs test suite</h3>
-  <p>Test suite for the <a href="github.com/amiller/otrjs">otrjs</a> javascript implementation of the OTR messaging protocol. The idea is to run a <a href="https://github.com/amiller/otrjs/blob/master/test/README">python server</a> that wraps libotr and have the javascript test suite speak to the server in OTR messages.
+  <p>Test suite for the <a href="https://github.com/amiller/otrjs">otrjs</a> javascript implementation of the OTR messaging protocol. The idea is to run a <a href="https://github.com/amiller/otrjs/blob/master/test/README">python webserver</a> that wraps libotr, and then to have the javascript test suite speak to the server in OTR messages. If the javascript can do a whole OTR exchange with the python-otr, then it probably works!
+
+<code>
+<p>
+News: (Jul-24-2011) (amiller@dappervision.com) first commit, otr-message needs some work. I should be able to move ahead integrating the underlying components (aes encryption? dsa private keys?) and testing them with python-otr internals.
+</code>
 
 <p>Important components:
 <ul>
-<li><a href="https://github.com/ianb/doctestjs">doctest.js</a>
-<li><a href="http://github.com/amiller/otrjs">otrjs</a>
-<li><a href="http://github.com/abiggerhammer/otr-message">otr-message</a>
-<li><a href="http://python-otr.pentabarf.de/">python-otr</a>
+<li><a href="https://github.com/amiller/otrjs">otrjs</a> - OTR javascript implementation(the library we're testing)
+<li><a href="https://github.com/abiggerhammer/otr-message">otr-message</a> - parser for OTR packets
+<li><a href="http://python-otr.pentabarf.de/">python-otr</a> - wrapper (or clone?) of libotr
+<li><a href="http://point-at-infinity.org/jsaes/">jsaes</a> - javascript aes library
+<li><a href="https://github.com/ianb/doctestjs">doctest.js</a> - unittests for javascript
 </ul>
 
 <h3>Doctest output</h3>
@@ -37,32 +43,31 @@
 	    success: success
 	})
     }
+    function potr_version(success) {
+	$.ajax({
+	    method: 'post',
+	    url: '/info',
+	    dataType: 'json',
+	    success: success,
+	})
+    }
   </script>
   <h3>Check python-otr version</h3>
   <pre class="doctest">
-$ function test_version() {
+$ (function test_version() {
 >   var OK = false;
->   $.ajax({
->     method: 'post',
->     url: '/info',
->     dataType: 'json',
->     success: function (data) {
->       OK = true;
->       writeln(repr(data));
->     },
->     error: function (err) {
->       writeln(repor(err));
->     }
+>   potr_version(function (data) {
+>     OK = true;
+>     writeln(repr(data));
 >   })
 >   wait(function () { return OK });
-> }
-$ test_version();
+> })()
 {potr-version: [1, 0, 0, "beta1"]}
    </pre>
 
   <h3>Try to parse an OTR authStartV2 message</h3>
   <pre class="doctest">
-$ function test_parse() {
+$ (function test_parse() {
 >   var OK = false;
 >   rpc('testA', {}, function (data) {
 >     writeln(data.result);
@@ -72,8 +77,7 @@ $ function test_parse() {
 >     OK = true;
 >   })
 >   wait(function() { return OK });
-> }
-$ test_parse()
+> })()
   </pre>
 </body>
 </html>

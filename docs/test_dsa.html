@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Tests for Javascript DSA</title>
+  <script type="text/javascript" src="doctestjs/doctest.js"></script>
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script data-main="test_dsa" src="require.js"></script>
+  <link rel="stylesheet" type="text/css" href="doctestjs/doctest.css" />
+</head>
+<body>
+  <h3>Implementing DSA in Javascript</h3>
+<code>Andrew Miller &lt;amiller@dappervision.com&gt;</code>
+  <h4>Why this may be a good idea</h4>
+  <p>Javascript DSA is needed to implement an <a href="https://github.com/amiller/otrjs">in-browser OTR client</a>. A handful of projects have implemented <a href="http://crypto.stanford.edu/sjcl/">javascript</a> <a href="http://www-cs-students.stanford.edu/~tjw/jsbn/">cryptography</a>, including RSA, AES, SHA... DSA is missing.</p>
+  <h4>Why this may be a terrible idea</h4>
+  <em>Disclaimer:</em> <a href="http://www.eecs.ucf.edu/isuelab/people/andrew.php">I am not</a> a cryptography engineer and don't really have any business implementing my own cryptography. Javascript cryptography has a number of <a href="http://rdist.root.org/2010/11/29/final-post-on-javascript-crypto/">seemingly unavoidable problems</a> - it's tempting to just host javascript from a server (like this page itself!) yet there are no established mechanisms to make sure you get the same javascript that everyone else gets.
+
+  <h4>Resources</h4>
+<ul>
+<li><a href="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">FIPS standard including DSA</a>
+<li><a href="http://pycrypto.cvs.sourceforge.net/viewvc/pycrypto/crypto/PublicKey/DSA.py?revision=1.16&view=markup">PyCrypto DSA</a>
+<li><a href="http://en.wikipedia.org/wiki/Digital_Signature_Algorithm">Wikipedia DSA</a>
+<li><a href="https://github.com/jasondavies/jsbn">Javascript BigNumber library</a> - should contain all the necessary ingredients
+</ul>
+<code>
+News: (Jul-24-2011) (amiller@dappervision.com) The plan is to use PyCrypto as a gold-standard test rig. The javascript components should be compatible with PyCrypto.
+</code>
+
+<h3>Doctest output</h3>
+  <div id="doctestOutput"></div>
+  <script type="text/javascript">
+    var key_q;
+    require(['require',
+	     'crypto-js/crypto-sha256/crypto-sha256.js', 
+	     'jsbn/jsbn'], function (require) {
+	require(['crypto-js/sha256/sha256.js', ,
+		 'jsbn/jsbn2', 'dsa', 'test_dsa'], function (require) {
+	    test_dsa_setup();
+	    doctest();
+	});
+    });
+
+  </script>
+  <h4>DSA signature tests</h4>
+  <pre class="doctest">
+$ (function test_dsa_sign_() {
+>    var key = _test_dsa_key1;
+>    var Hm = Crypto.SHA256(_test_dsa_sign1.M)
+>    var M = new BigInteger(Hm, 16);
+>    var K = new BigInteger(_test_dsa_sign1.K, 16);
+>    var signature = key.sign(M, K);
+>    var r = signature[0].toString(16);
+>    var s = signature[1].toString(16);
+>    writeln([r, s]);
+> })()
+["7dae111bf02280392af0313237c9a29ca9501421", "d0be0794bf4252b7cb2ac555ebb41df3084ec9a"]
+   </pre>
+
+</body>
+</html>
