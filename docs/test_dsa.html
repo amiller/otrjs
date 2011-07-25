@@ -1,10 +1,10 @@
 <html>
 <head>
   <title>Tests for Javascript DSA</title>
-  <script type="text/javascript" src="doctestjs/doctest.js"></script>
-  <script type="text/javascript" src="jquery.min.js"></script>
-  <script data-main="test_dsa" src="require.js"></script>
-  <link rel="stylesheet" type="text/css" href="doctestjs/doctest.css" />
+  <script type="text/javascript" src="lib/doctestjs/doctest.js"></script>
+  <script type="text/javascript" src="lib/jquery.min.js"></script>
+  <script data-main="test_dsa" src="lib/require.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/doctestjs/doctest.css" />
 </head>
 <body>
   <h3>Javascript DSA implementation</h3>
@@ -36,11 +36,11 @@ Notes: (Jul-25-2011) (amiller@dappervision.com)
   <script type="text/javascript">
     var sha256hash;
     require(['require',
-	     'crypto-js/crypto-sha256/crypto-sha256.js', 
-             'jsbn/jsbn', 'jsbn/prng4.js'], function (require) {
-	require(['crypto-js/sha256/sha256.js', ,
-		 'jsbn/jsbn2', 'jsbn/rng.js', 
-                 'dsa', 'test_dsa'], function (require) {
+	     'lib/crypto-js/crypto-sha256/crypto-sha256.js', 
+             'lib/jsbn/jsbn.js', 'lib/jsbn/prng4.js'], function (require) {
+	require(['lib/crypto-js/sha256/sha256.js', ,
+		 'lib/jsbn/jsbn2.js', 'lib/jsbn/rng.js', 
+                 'lib/dsa.js', 'test_dsa.js'], function (require) {
 	    test_dsa_setup();
             sha256hash160 = function (m) { 
                 return Crypto.SHA256(m, {asBytes:1}).slice(0,20);
