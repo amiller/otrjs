@@ -10,8 +10,6 @@
   <h3>Javascript DSA implementation</h3>
 <p><code>Andrew Miller &lt;amiller@dappervision.com&gt;</code>
 <p>This is an implementation of DSA keypair generation, message signing, and signature verification. It's means to fit right in with the <a href="http://www-cs-students.stanford.edu/~tjw/jsbn/">JSBN implementation of RSA</a> (from which it borrows the hard parts, i.e. BigInteger math). DSA is needed to implement an <a href="https://github.com/amiller/otrjs">in-browser OTR client</a>. A handful of projects have implemented <a href="http://crypto.stanford.edu/sjcl/">javascript</a> <a href="http://www-cs-students.stanford.edu/~tjw/jsbn/">cryptography</a>, including RSA, AES, SHA... but DSA is missing.</p>
-
-<em><h3>Caution! Live Test! Your computer will probably freeze for a few seconds while generating a key</h3></em>
   <p>
   <h4>Why this may be a terrible idea</h4>
   <em>Disclaimer:</em> <a href="http://www.eecs.ucf.edu/isuelab/people/andrew.php">I am not</a> an experienced cryptography engineer, so I don't really have any business implementing my own cryptography except as a learning exercise. Javascript cryptography has a number of <a href="http://rdist.root.org/2010/11/29/final-post-on-javascript-crypto/">seemingly unavoidable weaknesses</a> - it's tempting to just host javascript from a server (like this page itself!) yet there are no established mechanisms to make sure you get the same javascript you're expecting. Also, I suppose there could be a good reason why DSA is worse for Javascript than RSA, AES, etc. If so, hopefully I find out!
@@ -22,10 +20,15 @@
 <li><a href="http://pycrypto.cvs.sourceforge.net/viewvc/pycrypto/crypto/PublicKey/DSA.py?revision=1.16&view=markup">PyCrypto DSA</a>
 <li><a href="http://en.wikipedia.org/wiki/Digital_Signature_Algorithm">Wikipedia DSA</a>
 <li><a href="https://github.com/jasondavies/jsbn">Javascript BigNumber library</a> - should contain all the necessary ingredients
+<li><a href="http://tools.ietf.org/html/rfc2412">IPSec Oakley</a> well known groups
 </ul>
 <code>
-News: (Jul-24-2011) (amiller@dappervision.com) The plan is to use PyCrypto as a gold-standard test rig. The javascript components should be compatible with PyCrypto.
-<br>(Jul-26-2011) (amiller@dappervision.com) Signing and verifying tested against precomputed tests. Keypair generation is tested for soundness. 50 rounds of miller-rabin are used for primality testing, as per FIPS. I am not otherwise sure if the key generation matches FIPS recommendations, so I need to check.
+Notes: (Jul-25-2011) (amiller@dappervision.com) 
+<br>- Domain parameters are now easy to set ahead of time. (Default to use group2 from RFC 2412)
+<br>- I'm using the wrong hash function, it looks like I MUST use SHA1?
+<br>- Larger bit sizes are optional if I'm using OpenSSL (libcrypto)
+<br>- Seeds should be included to promote validation
+<br>- Having continuations/progress updates would be great, but might cause leakage of some kind
 </code>
 
 <h3>Doctest output</h3>
@@ -39,23 +42,39 @@ News: (Jul-24-2011) (amiller@dappervision.com) The plan is to use PyCrypto as a 
 		 'jsbn/jsbn2', 'jsbn/rng.js', 
                  'dsa', 'test_dsa'], function (require) {
 	    test_dsa_setup();
-            sha256hash = function (m) { 
+            sha256hash160 = function (m) { 
                 return Crypto.SHA256(m, {asBytes:1}).slice(0,20);
             }
-	    doctest();
+		     setTimeout(doctest, 500);     
+
 	});
     });
 
   </script>
   <h4>DSA signature tests</h4>
   These test vectors are precomputed using PyCrypto (see <a href="https://github.com/amiller/otrjs/blob/master/test/test_dsa.py">test_dsa.py</a> and <a href="test_dsa.js">test_dsa.js</a>. The Javascript DSA implementation being tested is here: <a href="dsa.js">docs/dsa.js</a>.
+  <h4>DSA generation (with RFC2412 Group 2)</h4>
+<pre class="doctest">
+$ (function test_dsa_generate_group2_() {
+>    var key = new DSAKey();
+>    key.group2(); // Create a keypair using RFC2412 Group 2 params
+>    var Hm = Crypto.SHA256("Test message #123125");
+>    var M = new BigInteger(Hm, 16);
+>    var signature = key.sign(M);
+>    writeln(key.validateKey());
+>    writeln(key.verify(M, signature));
+> })()
+true
+true
+   </pre>
+
+
   <pre class="doctest">
 $ (function test_dsa_sign_() {
 >    var key = _test_dsa_key1;
 >    var Hm = Crypto.SHA256(_test_dsa_sign1.M)
 >    var M = new BigInteger(Hm, 16);
->    var K = new BigInteger(_test_dsa_sign1.K, 16);
->    var signature = key.sign(M, K);
+>    var signature = key.sign(M);
 >    var r = signature[0].toString(16);
 >    var s = signature[1].toString(16);
 >    writeln([r, s]);
@@ -82,21 +101,22 @@ true
 false
    </pre>
 
-  <h4>DSA generation tests</h4>
+   <h4>Generating from scratch (skipped)</h4>
 <pre class="doctest">
 $ (function test_dsa_generate_() {
 >    var key = new DSAKey();
->    key.generate(1024, sha256hash);
+>    key.generate(1024, sha256hash160);
 >    var Hm = Crypto.SHA256("Test message asdfasdffffrdrser");
 >    var M = new BigInteger(Hm, 16);
 >    var K = new BigInteger(_test_dsa_sign1.K, 16);
 >    var signature = key.sign(M, K);
 >    writeln([signature[0].toString(16), signature[1].toString(16)]);
 >    writeln(key.verify(M, signature));
-> })()
+> })
 ...
-true
    </pre>
+
+
 
 </body>
 </html>
