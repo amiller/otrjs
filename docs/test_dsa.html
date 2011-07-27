@@ -33,7 +33,9 @@ Notes: (Jul-25-2011) (amiller@dappervision.com)
 <h3>Doctest output</h3>
   <div id="doctestOutput"></div>
   <script type="text/javascript">
-    var sha256hash;
+    var sha256hash160;
+    function fromHex(s) { return new BigInteger(s, 16); }
+
     require(['require',
 	     'lib/crypto-js/crypto-sha256/crypto-sha256.js', 
              'lib/jsbn/jsbn.js', 'lib/jsbn/prng4.js'], function (require) {
@@ -51,56 +53,56 @@ Notes: (Jul-25-2011) (amiller@dappervision.com)
 
   </script>
   <h4>DSA signature tests</h4>
-  These test vectors are precomputed using PyCrypto (see <a href="https://github.com/amiller/otrjs/blob/master/test/test_dsa.py">test_dsa.py</a> and <a href="test_dsa.js">test_dsa.js</a>. The Javascript DSA implementation being tested is here: <a href="dsa.js">docs/dsa.js</a>.
+  These test vectors are precomputed using PyCrypto (see <a href="https://github.com/amiller/otrjs/blob/master/test/test_dsa.py">test_dsa.py</a> and <a href="test_dsa.js">test_dsa.js</a>. The Javascript DSA implementation being tested is here: <a href="lib/dsa.js">dsa.js</a>.
   <h4>DSA generation (with RFC2412 Group 2)</h4>
 <pre class="doctest">
 $ (function test_dsa_generate_group2_() {
 >    var key = new DSAKey();
 >    key.group2(); // Create a keypair using RFC2412 Group 2 params
->    var Hm = Crypto.SHA256("Test message #123125");
->    var M = new BigInteger(Hm, 16);
->    var signature = key.sign(M);
->    writeln(key.validateKey());
->    writeln(key.verify(M, signature));
+>    var Hm = new BigInteger(Crypto.SHA256("Test message #123125"), 16);
+>    var signature = key.sign(Hm);
+>    writeln(key.verify(Hm, signature));
 > })()
-true
 true
    </pre>
 
-
+<h4>Signing with pycrypto test vector</h4>
   <pre class="doctest">
 $ (function test_dsa_sign_() {
+>    // Use private key parameters and K from the test vector
 >    var key = _test_dsa_key1;
->    var Hm = Crypto.SHA256(_test_dsa_sign1.M)
->    var M = new BigInteger(Hm, 16);
->    var signature = key.sign(M);
+>    var Hm = fromHex(Crypto.SHA256(_test_dsa_sign1.M));
+>    writeln(Hm.equals(fromHex(_test_dsa_sign1.H)))
+>    var signature = key.sign(Hm, fromHex(_test_dsa_sign1.K));
 >    var r = signature[0].toString(16);
 >    var s = signature[1].toString(16);
 >    writeln([r, s]);
->    writeln(key.verify(M, signature));
+>    writeln(r === _test_dsa_sign1.Signature[0] &&
+>            s === _test_dsa_sign1.Signature[1]);
 > })()
+true
 ...
 true
 </pre>
+
   <h4>DSA verification tests</h4>
 <pre class="doctest">
 $ (function test_dsa_verify_() {
+>    // Use public key parameters, message, and signature from the test vector
 >    var key = _test_dsa_key2;
->    var Hm = Crypto.SHA256(_test_dsa_verify1.M)
->    var M = new BigInteger(Hm, 16);
+>    var Hm = fromHex(Crypto.SHA256(_test_dsa_verify1.M))
 >    var S = _test_dsa_verify1.Signature;
->    var signature = [new BigInteger(S[0],16),
->                     new BigInteger(S[1],16)];
+>    var signature = [fromHex(S[0]), fromHex(S[1])];
 >    writeln([signature[0].toString(16), signature[1].toString(16)]);
->    writeln(key.verify(M, signature));
->    writeln(key.verify(M.add(BigInteger.ONE), signature));
+>    writeln(key.verify(Hm, signature));
+>    writeln(key.verify(Hm.add(BigInteger.ONE), signature));
 > })()
 ...
 true
 false
    </pre>
 
-   <h4>Generating from scratch (skipped)</h4>
+   <h4>Generating parameters from scratch (skipped because it's slow)</h4>
 <pre class="doctest">
 $ (function test_dsa_generate_() {
 >    var key = new DSAKey();
