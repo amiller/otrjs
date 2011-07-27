@@ -90,6 +90,6 @@ def test_group2():
 
 
 if __name__ == '__main__':
-    #print json.dumps(test_dsa_sign())
+    print json.dumps(test_dsa_sign())
     #test_key()
-    test_group2()
+    #test_group2()

@@ -36,7 +36,7 @@ def get_dsa():
 
 
 app = flask.Flask(__name__, static_folder='../docs', static_path='')
-app.debug=True
+#app.debug=True
 
 
 @app.route('/')
